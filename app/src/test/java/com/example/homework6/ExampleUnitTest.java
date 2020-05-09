@@ -1,4 +1,4 @@
-package com.adida.hw06;
+package com.example.homework6;
 
 import org.junit.Test;
 

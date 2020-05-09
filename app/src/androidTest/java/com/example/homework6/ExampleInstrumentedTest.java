@@ -1,4 +1,4 @@
-package com.adida.hw06;
+package com.example.homework6;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("com.adida.hw06", appContext.getPackageName());
+        assertEquals("com.example.homework6", appContext.getPackageName());
     }
 }
