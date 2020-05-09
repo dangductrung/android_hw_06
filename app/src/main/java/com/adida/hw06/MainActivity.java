@@ -63,9 +63,15 @@ public class MainActivity extends AppCompatActivity {
         myBar.setVisibility(View.VISIBLE);
         // create-start background thread were the busy work will be done
         Thread myBackgroundThread = new Thread( backgroundTask, "backAlias1");
-        isDone = false;
+        resetTask();
         myBackgroundThread.start();
 
+    }
+
+    private void resetTask(){
+        numTaskDone = 0;
+        taskStep = 100;
+        isDone = false;
     }
 
     private Runnable backgroundTask = new Runnable() {
