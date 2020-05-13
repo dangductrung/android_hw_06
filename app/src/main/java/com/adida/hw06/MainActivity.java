@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static String MYTAG = "QT";
+
     Handler myHandler = new Handler();
 
     Button btnDoItAgain;
@@ -21,9 +23,9 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar myBar;
     EditText edtNumTask;
 
-    int totalTask = 1000;
+    int totalTask = 100;
     int numTaskDone = 0;
-    int taskStep = 100;
+    int taskStep = 1;
     boolean isDone = false;
 
     @Override
@@ -35,93 +37,104 @@ public class MainActivity extends AppCompatActivity {
         myBar = findViewById(R.id.myBar);
         edtNumTask = findViewById(R.id.edtNumTask);
 
-        btnDoItAgain = (Button)findViewById(R.id.btnDoItAgain);
+        btnDoItAgain = (Button) findViewById(R.id.btnDoItAgain);
         btnDoItAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onStart();
+                doSlowTask();
             }
         });
 
     }
 
+    private void doSlowTask() {
+
+        Log.i(MYTAG, "start do slow task");
+        btnDoItAgain.setEnabled(false);
+        resetTask();
+
+        try {
+            totalTask = Integer.parseInt(edtNumTask.getText().toString());
+        } catch (Exception ex) {
+            Log.e(MYTAG, "parse error");
+        }
+        Log.i(MYTAG, "total task: " + totalTask);
+
+        // create-start background thread were the busy work will be done
+        Thread myBackgroundThread = new Thread(backgroundTask, "backAlias1");
+        myBackgroundThread.start();
+    }
+
+    private void resetTask() {
+        // reset data
+        numTaskDone = 0;
+        taskStep = 1;
+        totalTask = 100;
+        isDone = false;
+
+        // reset ui
+        txtInfo.setText("0%");
+        myBar.setMax(100);
+        myBar.setProgress(0);
+        myBar.setVisibility(View.VISIBLE);
+    }
+
+
     @Override
     protected void onStart() {
         super.onStart();
 
-
-        txtInfo.setText("0%");
-        btnDoItAgain.setEnabled(false);
-        try{
-            totalTask = Integer.parseInt(edtNumTask.getText().toString());
-        }
-        catch (Exception ex){}
-        // reset and show progress bars
-        //accum = 0;
-        myBar.setMax(100);
-        myBar.setProgress(0);
-        myBar.setVisibility(View.VISIBLE);
-        // create-start background thread were the busy work will be done
-        Thread myBackgroundThread = new Thread( backgroundTask, "backAlias1");
-        resetTask();
-        myBackgroundThread.start();
-
     }
 
-    private void resetTask(){
-        numTaskDone = 0;
-        taskStep = 100;
-        isDone = false;
-    }
 
     private Runnable backgroundTask = new Runnable() {
         @Override
         public void run() { // busy work goes here...
             try {
-                while(!isDone) {
-                    Thread.sleep(10);
-//                    doTask();
-                    numTaskDone+=taskStep;
+                while (!isDone) {
+                    Thread.sleep(1);
+                    updateTask();
                     myHandler.post(foregroundRunnable);
                 }
+            } catch (InterruptedException e) {
+                Log.e(MYTAG, e.getMessage());
             }
-            catch (InterruptedException e) {
-                Log.e("<<foregroundTask>>", e.getMessage());
-            }
-            Log.i("QT", "background end");
         }// run
-    };// backgroundTask
 
-    public void doTask(){
-        numTaskDone+= taskStep;
-    }
+        //    public void doTask(){
+        public void updateTask() {
+            numTaskDone += taskStep;
+        }
+
+    };
+
 
     private Runnable foregroundRunnable = new Runnable() {
         @Override
         public void run() {
             try {
-                Log.e("QT", "total:" + totalTask);
-                Log.e("QT", "" + numTaskDone);
-                int percent = (int)((float)100*numTaskDone/(float)totalTask);
-                Log.e("QT", "" + percent + "%");
-                txtInfo.setText(""+percent+"%");
+                int numDone = numTaskDone;
+                int numTotal = totalTask;
+                int percent = (int) ((float) 100 * numDone / (float) numTotal);
+                txtInfo.setText("" + numDone + "-" + percent + "%");
+                Log.e(MYTAG, "" + numDone + "-" + percent + "%");
 
-                //myBarHorizontal.incrementProgressBy(progressStep); accum += progressStep;
-                try{
-                    myBar.setProgress(percent);
+                if (numDone < numTotal) {
+                    try {
+                        myBar.setProgress(percent);
+                    } catch (Exception ex) {
+                    }
                 }
-                catch (Exception ex){}
-                if (numTaskDone >= totalTask) {
+                else{
                     isDone = true;
-                    txtInfo.setText("done hehehe");
+                    txtInfo.setText("done 100%");
                     myBar.setProgress(100);
-//                    myBar.setVisibility(View.INVISIBLE);
                     btnDoItAgain.setEnabled(true);
                 }
+            } catch (Exception e) {
+                Log.e(MYTAG, e.getMessage());
             }
-            catch (Exception e) {
-                Log.e("<<foregroundTask>>", e.getMessage());
-            }
+
         }
     }; // foregroundTask
 
