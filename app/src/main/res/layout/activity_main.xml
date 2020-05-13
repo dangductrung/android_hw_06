@@ -5,32 +5,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_margin="10dp">
 
     <EditText
         android:id="@+id/edtNumTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
+        android:background="@drawable/back"
+        android:gravity="center"
+        android:hint="Enter number of tasks"
+        android:padding="10dp"
         />
 
-    <TextView
-        android:id="@+id/txtInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0%"/>
-
-    <ProgressBar
-        android:id="@+id/myBar"
-        style="?android:attr/progressBarStyleHorizontal"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:id="@+id/txtInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="0%"
+            android:layout_weight="3"/>
+
+        <ProgressBar
+            android:id="@+id/myBar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="8"
+            android:scaleY="3"/>
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnDoItAgain"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="do it again"/>
+        android:text="do it again"
+        android:background="@drawable/back"
+        android:textStyle="bold"/>
 
 
 </LinearLayout>
